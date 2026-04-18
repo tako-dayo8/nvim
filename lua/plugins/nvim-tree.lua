@@ -1,0 +1,32 @@
+-- open File Tree when open
+local function open_nvim_tree()
+    require("nvim-tree.api").tree.open()
+end
+
+vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
+
+return {
+  "nvim-tree/nvim-tree.lua",
+  version = "*",
+  lazy = false,
+  dependencies = {
+    "nvim-tree/nvim-web-devicons",
+  },
+  keys = {
+    {mode = "n", "<C-n>", "<cmd>NvimTreeToggle<CR>", desc = "NvimTreeをトグルする"},
+    {mode = "n", "<C-m>", "<cmd>NvimTreeFocus<CR>", desc = "NvimTreeにフォーカス"},
+    {mode = "n", "<leader>r", "<cmd>NvimTreeFindFile<CR>", desc = "現在開いているファイルの場所にツリーを移動" }
+  },
+  config = function()
+    require("nvim-tree").setup {
+      update_focused_file = {
+        enable = true,    -- フォーカスは追従する
+        update_root = false,  -- ルートを勝手に変更しない！
+      },
+      git = {
+        enable = true,
+        ignore = true,
+      }
+    }
+  end,
+}

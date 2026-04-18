@@ -1,7 +1,4 @@
-# 🧠 Neovim 開発環境（Windows）
-
-Neovim + WezTerm + lazygit を使った
-**どのPCでも再現可能な開発環境**です。
+# Neovim 開発環境（Windows）
 
 ---
 
@@ -15,7 +12,24 @@ Neovim + WezTerm + lazygit を使った
 
 ## 📦 必要な環境（事前インストール）
 
-### 必須
+# Neovim 開発環境
+
+Neovim + lazygit + LSP を使った
+**クロスプラットフォーム開発環境（Windows / Linux対応）**
+
+---
+
+## 🚀 特徴
+
+* 📂 ファイルツリー（nvim-tree）
+* 🔀 Git操作（lazygit）
+* 🧠 コード補完（LSP + nvim-cmp）
+
+---
+
+# 🪟 Windows セットアップ
+
+## 📦 必須
 
 ```bash
 winget install JesseDuffield.lazygit
@@ -23,7 +37,66 @@ winget install JesseDuffield.lazygit
 
 ---
 
-## 🧠 LSP（言語サーバー）
+## 📁 設定配置
+
+```bash
+git clone https://github.com/tako-dayo8/nvim.git %LOCALAPPDATA%\nvim
+```
+
+---
+
+## 📦 lazy.nvim
+
+```bash
+git clone https://github.com/folke/lazy.nvim %LOCALAPPDATA%\nvim-data\lazy\lazy.nvim
+```
+
+---
+
+## ▶️ 起動
+
+```bash
+nvim
+```
+
+---
+
+# 🐧 Linux セットアップ
+
+## 📦 必須（Ubuntu例）
+
+```bash
+sudo apt update
+sudo apt install neovim git nodejs npm python3 python3-pip golang lazygit
+```
+
+---
+
+## 📁 設定配置
+
+```bash
+git clone <このリポジトリ> ~/.config/nvim
+```
+
+---
+
+## 📦 lazy.nvim
+
+```bash
+git clone https://github.com/folke/lazy.nvim ~/.local/share/nvim/lazy/lazy.nvim
+```
+
+---
+
+## ▶️ 起動
+
+```bash
+nvim
+```
+
+---
+
+# 🧠 LSP（共通）
 
 ```bash
 npm install -g typescript typescript-language-server
@@ -33,35 +106,7 @@ go install golang.org/x/tools/gopls@latest
 
 ---
 
-## 📁 セットアップ手順
-
-### ① 設定をクローン
-
-```bash
-git clone <このリポジトリ> %LOCALAPPDATA%\nvim
-```
-
----
-
-### ② lazy.nvim インストール（初回のみ）
-
-```bash
-git clone https://github.com/folke/lazy.nvim %LOCALAPPDATA%\nvim-data\lazy\lazy.nvim
-```
-
----
-
-### ③ 起動
-
-```bash
-nvim
-```
-
-👉 初回起動でプラグインが自動インストールされます
-
----
-
-## ✅ 動作確認
+# ✅ 動作確認
 
 ```vim
 :LspInfo
@@ -69,8 +114,8 @@ nvim
 
 以下が表示されればOK：
 
-- ts_ls
-- pyright
-- gopls
+* ts_ls
+* pyright
+* gopls
 
----
+

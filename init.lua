@@ -36,25 +36,29 @@ require("lazy").setup({
     end
   },
 
-  -- LSP
+  -- LSP (0.11以降の書き方に最適化)
   {
     "neovim/nvim-lspconfig",
     config = function()
-      local lspconfig = require("lspconfig")
+      -- Neovim 0.11+ の新しい設定方法
+      local servers = {
+        ts_ls = {
+          filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
+        },
+        pyright = {},
+        gopls = {}
+      }
 
-      -- TypeScript / JavaScript
-      lspconfig.ts_ls.setup({
-        filetypes = {
-          "javascript", "javascriptreact",
-          "typescript", "typescriptreact"
-        }
-      })
-
-      -- Python
-      lspconfig.pyright.setup({})
-
-      -- Go
-      lspconfig.gopls.setup({})
+      for server, config in pairs(servers) do
+        -- 新しいAPIがある場合はそちらを使用
+        if vim.lsp.config then
+          vim.lsp.config(server, config)
+          vim.lsp.enable(server)
+        else
+          -- 万が一古いバージョンに戻した場合の互換性
+          require("lspconfig")[server].setup(config)
+        end
+      end
     end
   },
 
@@ -66,7 +70,6 @@ require("lazy").setup({
     },
     config = function()
       local cmp = require("cmp")
-
       cmp.setup({
         mapping = cmp.mapping.preset.insert({
           ["<C-Space>"] = cmp.mapping.complete(),
@@ -87,22 +90,16 @@ require("lazy").setup({
       require('telescope').setup()
     end
   },
-
 })
 
 -- =========================
 -- キーバインド
 -- =========================
--- nvim-tree
 vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>")
 vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
-
--- Telescope
 vim.keymap.set("n", "<C-f>" , ":Telescope find_files<CR>")
 vim.keymap.set("n", "<C-g>" , ":Telescope live_grep<CR>")
-
--- lazygit
 vim.keymap.set("n", "<leader>g", function()
   vim.cmd("terminal lazygit")
 end)

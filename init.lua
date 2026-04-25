@@ -90,6 +90,22 @@ require("lazy").setup({
       require('telescope').setup()
     end
   },
+
+  -- カラースキーム
+  {
+    "catppuccin/nvim",
+     config = function()
+      require('catppuccin').setup()
+    end
+  },
+
+  -- autopairs
+  {
+    "windwp/nvim-autopairs",
+     config = function()
+      require('nvim-autopairs').setup()
+    end
+  }
 })
 
 -- =========================
@@ -103,3 +119,7 @@ vim.keymap.set("n", "<C-g>" , ":Telescope live_grep<CR>")
 vim.keymap.set("n", "<leader>g", function()
   vim.cmd("terminal lazygit")
 end)
+
+
+
+vim.cmd.colorscheme("catppuccin-nvim")

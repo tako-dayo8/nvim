@@ -10,7 +10,7 @@ vim.opt.clipboard = "unnamedplus"
 -- =========================
 -- lazy.nvim 読み込み
 -- =========================
-vim.opt.rtp:prepend(vim.fn.stdpath("data") .. "\\lazy\\lazy.nvim")
+vim.opt.rtp:prepend(vim.fn.stdpath("data") .. "/lazy/lazy.nvim")
 
 require("lazy").setup({
 
@@ -79,16 +79,28 @@ require("lazy").setup({
     end
   },
 
+  -- 検索
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require('telescope').setup()
+    end
+  },
+
 })
 
 -- =========================
 -- キーバインド
 -- =========================
+-- nvim-tree
+vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>")
 vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
 
--- nvim-tree
-vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>")
+-- Telescope
+vim.keymap.set("n", "<C-f>" , ":Telescope find_files<CR>")
+vim.keymap.set("n", "<C-g>" , ":Telescope live_grep<CR>")
 
 -- lazygit
 vim.keymap.set("n", "<leader>g", function()

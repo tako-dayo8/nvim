@@ -39,23 +39,23 @@ winget install JesseDuffield.lazygit
 
 ## 📁 設定配置
 
-```bash
-git clone https://github.com/tako-dayo8/nvim.git %LOCALAPPDATA%\nvim
+```pwsh
+git clone https://github.com/tako-dayo8/nvim.git $env:LOCALAPPDATA\nvim
 ```
 
 ---
 
 ## 📦 lazy.nvim
 
-```bash
-git clone https://github.com/folke/lazy.nvim %LOCALAPPDATA%\nvim-data\lazy\lazy.nvim
+```pwsh
+git clone https://github.com/folke/lazy.nvim $env:LOCALAPPDATA\nvim-data\lazy\lazy.nvim
 ```
 
 ---
 
 ## ▶️ 起動
 
-```bash
+```pwsh
 nvim
 ```
 
@@ -75,7 +75,7 @@ sudo apt install neovim git nodejs npm python3 python3-pip golang lazygit
 ## 📁 設定配置
 
 ```bash
-git clone <このリポジトリ> ~/.config/nvim
+git clone https://github.com/folke/lazy.nvim ~/.config/nvim
 ```
 
 ---

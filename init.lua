@@ -105,13 +105,22 @@ require("lazy").setup({
      config = function()
       require('nvim-autopairs').setup()
     end
-  }
+  },
+
+  -- MarkdownPreview
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    config = function() vim.fn["mkdp#util#install"]() end,
+  },
 })
 
 -- =========================
 -- キーバインド
 -- =========================
 vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>")
+vim.keymap.set("n", "<leader>m", ":MarkdownPreview<CR>")
 vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
 vim.keymap.set("n", "<C-f>" , ":Telescope find_files<CR>")

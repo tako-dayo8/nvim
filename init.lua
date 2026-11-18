@@ -8,6 +8,7 @@ vim.pack.add({
   'https://github.com/nvim-tree/nvim-tree.lua',     -- ファイルツリー本体
   'https://github.com/nvim-lua/plenary.nvim',          -- Telescope が内部で使う部品集
   'https://github.com/nvim-telescope/telescope.nvim',  -- 検索画面の本体
+  'https://github.com/folke/flash.nvim',
 })
 
 require('blink.cmp').setup({
@@ -26,6 +27,24 @@ require('blink.cmp').setup({
 	},
 	 -- 関数の引数を入力中に、引数の説明を出す
   	signature = { enabled = true },
+
+
+	-- コマンドラインサジェスト
+	cmdline = {
+		enabled = true,
+		keymap = {
+			['<Tab>'] = { 'select_next', 'fallback' },
+			['<S-Tab>'] = { 'select_prev', 'fallback' },
+		},
+		completion = {
+			list = { selection = { preselect = false }},
+			menu = {
+				auto_show = function()
+					return vim.fn.getcmdtype() == ':'
+				end,
+			}
+		},
+	}
 })
 
 -- Neovim 内蔵のファイル一覧(netrw)を無効にする
@@ -79,6 +98,9 @@ vim.cmd.colorscheme('tokyonight')
 vim.o.tabstop = 4     -- タブ文字1個を4桁幅で表示する
 vim.o.shiftwidth = 4  -- 自動インデントや >> で動く幅
 
+vim.opt.number = true
+vim.opt.relativenumber = true
+
 
 local npairs = require('nvim-autopairs')
 npairs.setup()
@@ -96,6 +118,18 @@ vim.keymap.set('i', '<CR>', function()
   return npairs.autopairs_cr()
 end, { expr = true, replace_keycodes = false })
 
+
+-- flash.nvim 
+local flash = require("flash")
+flash.setup({
+	label = {
+		before = true,
+		after = false,
+	}
+})
+vim.keymap.set({'n', 'x', 'o'}, '<CR>', function()
+	flash.jump()
+end, { desc = "Flash Jump" })
 
 -- Space → g: 新しいタブで lazygit を開く
 vim.keymap.set('n', '<Space>g', function()

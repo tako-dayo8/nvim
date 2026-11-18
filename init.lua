@@ -84,10 +84,24 @@ vim.lsp.config('lua_ls', {
   },
 })
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+vim.lsp.config('markdown-oxide', {
+	 capabilities = vim.tbl_deep_extend(
+        'force',
+        capabilities,
+        {
+            workspace = {
+                didChangeWatchedFiles = {
+                    dynamicRegistration = true,
+                },
+            },
+        }
+    ),
+})
 
 -- LSP: 使うサーバーを有効化。名前は nvim-lspconfig 内の設定名と対応している
 -- 対応するファイル(.go など)を開いたときに、自動でサーバーが起動する
-vim.lsp.enable({ 'lua_ls', 'ts_ls', 'gopls','pylsp', 'ruff', 'bashls' })
+vim.lsp.enable({ 'lua_ls', 'ts_ls', 'gopls','pylsp', 'ruff', 'bashls', 'markdown-oxide' })
 
 -- エラーや警告を行の右側に表示する(既定では非表示)
 vim.diagnostic.config({ virtual_text = true })

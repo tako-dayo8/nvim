@@ -16,6 +16,8 @@ vim.pack.add({
 
 require('ai')
 
+require('inline-terminal')
+
 require('blink.cmp').setup({
 	keymap = {
 		preset = 'enter',
@@ -183,4 +185,3 @@ vim.keymap.set('n', '<Space>g', function()
   vim.keymap.set('t', '<Esc>', '<Esc>', { buffer = buf })
   vim.cmd('startinsert')
 end)
-

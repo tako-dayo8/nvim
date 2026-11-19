@@ -9,7 +9,11 @@ vim.pack.add({
   'https://github.com/nvim-lua/plenary.nvim',          -- Telescope が内部で使う部品集
   'https://github.com/nvim-telescope/telescope.nvim',  -- 検索画面の本体
   'https://github.com/folke/flash.nvim',
+  'https://github.com/lewis6991/gitsigns.nvim',  
+  'https://github.com/sindrets/diffview.nvim',
 })
+
+require('ai')
 
 require('blink.cmp').setup({
 	keymap = {

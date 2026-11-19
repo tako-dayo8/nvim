@@ -12,6 +12,7 @@ vim.pack.add({
   'https://github.com/folke/flash.nvim',
   'https://github.com/lewis6991/gitsigns.nvim',  
   'https://github.com/sindrets/diffview.nvim',
+  'https://github.com/dnlhc/glance.nvim',
 })
 
 require('ai')
@@ -185,3 +186,28 @@ vim.keymap.set('n', '<Space>g', function()
   vim.keymap.set('t', '<Esc>', '<Esc>', { buffer = buf })
   vim.cmd('startinsert')
 end)
+
+
+require("glance").setup({
+  height = 18,
+  border = {
+    enable = true,
+    top_char = "―",
+    bottom_char = "―",
+  },
+  list = {
+    position = "right",
+    width = 0.33,
+  },
+  theme = {
+    enable = true,
+    mode = "darken",
+  },
+})
+
+-- 3. キーマップ（LSPの参照・定義などをインライン展開）
+local map = vim.keymap.set
+map("n", "gr", "<CMD>Glance references<CR>", { desc = "Glance References" })
+map("n", "gd", "<CMD>Glance definitions<CR>", { desc = "Glance Definitions" })
+map("n", "gy", "<CMD>Glance type_definitions<CR>", { desc = "Glance Type Definitions" })
+map("n", "gM", "<CMD>Glance implementations<CR>", { desc = "Glance Implementations" })

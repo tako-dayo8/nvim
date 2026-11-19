@@ -4,8 +4,9 @@ vim.pack.add({
   { src = 'https://github.com/saghen/blink.cmp', version = vim.version.range('1.*') },
   'https://github.com/windwp/nvim-autopairs',
   'https://github.com/folke/tokyonight.nvim',
-  'https://github.com/nvim-tree/nvim-web-devicons', -- ファイル種別のアイコン
-  'https://github.com/nvim-tree/nvim-tree.lua',     -- ファイルツリー本体
+  'https://github.com/stevearc/oil.nvim',
+  'https://github.com/nvim-tree/nvim-web-devicons',
+  'https://github.com/refractalize/oil-git-status.nvim',
   'https://github.com/nvim-lua/plenary.nvim',          -- Telescope が内部で使う部品集
   'https://github.com/nvim-telescope/telescope.nvim',  -- 検索画面の本体
   'https://github.com/folke/flash.nvim',
@@ -55,11 +56,19 @@ require('blink.cmp').setup({
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+require('nvim-web-devicons').setup()
+
 -- 既定の設定でツリーを有効にする
-require('nvim-tree').setup()
+require("oil").setup({
+	win_options = {
+		signcolumn = 'yes:2',
+	}
+})
+
+require("oil-git-status").setup()
 
 -- ノーマルモードで Space → e を押すと、ツリーを開閉する
-vim.keymap.set('n', '<Space>t', '<Cmd>NvimTreeToggle<CR>')
+vim.keymap.set('n', '<Space>t', '<Cmd>Oil<CR>')
 
 local builtin = require('telescope.builtin')
 

@@ -163,12 +163,21 @@ end, { desc = "Flash Jump" })
 
 -- Space → g: 新しいタブで lazygit を開く
 vim.keymap.set('n', '<Space>g', function()
-  -- ★ tabnew の前に、元のバッファからパスを取得して oil:// を消す
-  local dir = vim.api.nvim_buf_get_name(0):gsub('^oil://', '')
-  if vim.bo.filetype ~= 'oil' and dir ~= '' then
-    dir = vim.fn.fnamemodify(dir, ':h')
+  -- ★ tabnew の前に、元のバッファからディレクトリを取得する
+  local dir
+  if vim.bo.filetype == 'oil' then
+    dir = require('oil').get_current_dir()
+  else
+    local bufname = vim.api.nvim_buf_get_name(0)
+    if bufname ~= '' then
+      if vim.fn.isdirectory(bufname) == 1 then
+        dir = bufname
+      else
+        dir = vim.fn.fnamemodify(bufname, ':p:h')
+      end
+    end
   end
-  if dir == '' then
+  if not dir or dir == '' or vim.fn.isdirectory(dir) ~= 1 then
     dir = vim.fn.getcwd()
   end
 

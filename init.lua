@@ -163,16 +163,26 @@ end, { desc = "Flash Jump" })
 
 -- Space → g: 新しいタブで lazygit を開く
 vim.keymap.set('n', '<Space>g', function()
+  -- ★ tabnew の前に、元のバッファからパスを取得して oil:// を消す
+  local dir = vim.api.nvim_buf_get_name(0):gsub('^oil://', '')
+  if vim.bo.filetype ~= 'oil' and dir ~= '' then
+    dir = vim.fn.fnamemodify(dir, ':h')
+  end
+  if dir == '' then
+    dir = vim.fn.getcwd()
+  end
+
   vim.cmd('tabnew')
   local tab = vim.api.nvim_get_current_tabpage()
   local buf = vim.api.nvim_get_current_buf()
 
   -- 今のバッファをターミナルにして、lazygit を起動する
   vim.fn.jobstart('lazygit', {
+    cwd = dir, -- ★ ここを追加
     term = true,
     -- lazygit を終了したら、このバッファ(とタブ)を片付ける
     on_exit = function()
-           -- 1. lazygit を開いたタブを閉じる
+      -- 1. lazygit を開いたタブを閉じる
       if vim.api.nvim_tabpage_is_valid(tab) then
         pcall(vim.cmd, 'tabclose! ' .. vim.api.nvim_tabpage_get_number(tab))
       end
@@ -180,8 +190,8 @@ vim.keymap.set('n', '<Space>g', function()
       if vim.api.nvim_buf_is_valid(buf) then
         vim.api.nvim_buf_delete(buf, { force = true })
       end
-        end,
-})
+    end,
+  })
   -- このターミナルの中だけ、Esc を lazygit にそのまま渡す
   vim.keymap.set('t', '<Esc>', '<Esc>', { buffer = buf })
   vim.cmd('startinsert')
@@ -209,5 +219,5 @@ require("glance").setup({
 local map = vim.keymap.set
 map("n", "gr", "<CMD>Glance references<CR>", { desc = "Glance References" })
 map("n", "gd", "<CMD>Glance definitions<CR>", { desc = "Glance Definitions" })
-map("n", "gy", "<CMD>Glance type_definitions<CR>", { desc = "Glance Type Definitions" })
+map("n", "gt", "<CMD>Glance type_definitions<CR>", { desc = "Glance Type Definitions" })
 map("n", "gM", "<CMD>Glance implementations<CR>", { desc = "Glance Implementations" })

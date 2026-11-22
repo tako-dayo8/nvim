@@ -1,23 +1,73 @@
--- プラグイン: GitのURLを並べるだけ。起動時に未インストールなら取得される
-vim.pack.add({
-  'https://github.com/neovim/nvim-lspconfig',
-  { src = 'https://github.com/saghen/blink.cmp', version = vim.version.range('1.*') },
-  'https://github.com/windwp/nvim-autopairs',
-  'https://github.com/folke/tokyonight.nvim',
-  'https://github.com/stevearc/oil.nvim',
-  'https://github.com/nvim-tree/nvim-web-devicons',
-  'https://github.com/refractalize/oil-git-status.nvim',
-  'https://github.com/nvim-lua/plenary.nvim',          -- Telescope が内部で使う部品集
-  'https://github.com/nvim-telescope/telescope.nvim',  -- 検索画面の本体
-  'https://github.com/folke/flash.nvim',
-  'https://github.com/lewis6991/gitsigns.nvim',  
-  'https://github.com/sindrets/diffview.nvim',
-  'https://github.com/dnlhc/glance.nvim',
+-- プラグイン管理 (lazy.nvim)
+require('plugins')
+
+-- ファイルを開いたとき、.git 等があるプロジェクトルートへ自動で移動する
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function(args)
+    local root = vim.fs.root(args.buf, { ".git", "package.json", "go.mod", "pyproject.toml" })
+    if root then
+      vim.fn.chdir(root)
+    end
+  end,
 })
 
 require('ai')
-
 require('inline-terminal')
+require('lsp')
+
+
+require("noice").setup({
+  lsp = {
+    -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+    override = {
+      ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+      ["vim.lsp.util.stylize_markdown"] = true,
+    },
+  },
+  -- you can enable a preset for easier configuration
+  presets = {
+    bottom_search = true, -- use a classic bottom cmdline for search
+    command_palette = true, -- position the cmdline and popupmenu together
+    long_message_to_split = true, -- long messages will be sent to a split
+    inc_rename = false, -- enables an input dialog for inc-rename.nvim
+    lsp_doc_border = false, -- add a border to hover docs and signature help
+  },
+  views = {
+    cmdline_popup = {
+      position = {
+        row = "85%", -- 下側に配置（微調整したい場合は "90%" などに変更）
+        col = "50%",
+      },
+      size = {
+        width = 60,
+        height = "auto",
+      },
+    },
+  },
+  messages = {
+    enabled = true,
+    view = "notify",       -- 通常のコマンド結果（:w, :echo 等）
+    view_error = "notify", -- エラー
+    view_warn = "notify",  -- 警告
+  },
+})
+
+
+require("snacks").setup({
+  dashboard = {
+    enabled = true,
+    sections = {
+      { section = "header" },
+      { icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
+      { icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
+      { icon = " ", title = "Keymaps", section = "keys", indent = 2, padding = 1 },
+    },
+  },
+  notifier = {
+    enabled = true,
+    timeout = 3000, -- 表示時間（ミリ秒）
+  },
+})
 
 require('blink.cmp').setup({
 	keymap = {
@@ -73,55 +123,40 @@ require("oil-git-status").setup()
 -- ノーマルモードで Space → e を押すと、ツリーを開閉する
 vim.keymap.set('n', '<Space>t', '<Cmd>Oil<CR>')
 
+local telescope = require('telescope')
 local builtin = require('telescope.builtin')
+
+telescope.setup({
+  defaults = {
+    -- .git と node_modules を検索から除外
+    file_ignore_patterns = {
+      '%.git[/\\]',
+      'node_modules[/\\]',
+    },
+  },
+  extensions = {
+  frecency = {
+    -- 削除済みファイルを自動で履歴から掃除する
+    auto_validate = true,
+    -- 検索窓で :CWD: のようにタグ絞り込みを使える
+    default_workspace = "CWD",
+  },
+}
+})
+
+-- 拡張機能を読み込み
+telescope.load_extension('live_grep_args')
+telescope.load_extension("frecency")
+
+-- 例1: 現在のプロジェクト(CWD)内のよく使うファイルだけから探す
+vim.keymap.set("n", "<Space>r", "<Cmd>Telescope frecency workspace=CWD<CR>")
 
 -- Space → f: ファイル名で探して開く
 vim.keymap.set('n', '<Space>f', builtin.find_files)
--- Space → s: プロジェクト全体から文字列を探す
-vim.keymap.set('n', '<Space>s', builtin.live_grep)
+-- Space → s: プロジェクト全体から文字列を探す（-g *.ts 等で絞り込み可能）
+vim.keymap.set('n', '<Space>s', telescope.extensions.live_grep_args.live_grep_args)
 -- Space → b: 今開いているファイル(バッファ)の一覧から選ぶ
 vim.keymap.set('n', '<Space>b', builtin.buffers)
-
--- lua_ls: resolve global `vim`
-vim.lsp.config('lua_ls', {
-  settings = {
-    Lua = {
-      runtime = {
-        version = 'LuaJIT',
-      },
-      diagnostics = {
-        globals = { 'vim' }, -- これで警告が消えます
-      },
-      workspace = {
-        library = vim.api.nvim_get_runtime_file("", true), -- これでvim.*の補完が出ます
-        checkThirdParty = false,
-      },
-    },
-  },
-})
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-vim.lsp.config('markdown-oxide', {
-	 capabilities = vim.tbl_deep_extend(
-        'force',
-        capabilities,
-        {
-            workspace = {
-                didChangeWatchedFiles = {
-                    dynamicRegistration = true,
-                },
-            },
-        }
-    ),
-})
-
--- LSP: 使うサーバーを有効化。名前は nvim-lspconfig 内の設定名と対応している
--- 対応するファイル(.go など)を開いたときに、自動でサーバーが起動する
-vim.lsp.enable({ 'lua_ls', 'ts_ls', 'gopls','pylsp', 'ruff', 'bashls', 'markdown-oxide' })
-
--- エラーや警告を行の右側に表示する(既定では非表示)
-vim.diagnostic.config({ virtual_text = true })
-
 
 vim.cmd.colorscheme('tokyonight')
 

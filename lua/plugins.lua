@@ -48,6 +48,9 @@ require("lazy").setup({
   -- Git
   "lewis6991/gitsigns.nvim",
   "sindrets/diffview.nvim",
+
+  -- Formatter
+  "stevearc/conform.nvim",
 }, {
   install = { colorscheme = { "tokyonight" } },
   checker = { enabled = false },
